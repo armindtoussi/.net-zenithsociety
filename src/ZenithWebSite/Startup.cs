@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using ZenithWebSite.Data;
 using ZenithWebSite.Models;
 using ZenithWebSite.Services;
+using AspNet.Security.OpenIdConnect.Primitives;
 
 namespace ZenithWebSite
 {
@@ -45,14 +46,55 @@ namespace ZenithWebSite
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
+
+            // services.AddDbContext<ApplicationDbContext>(options =>
+            //{
+            //   options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+            //});
+
             //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            //var connection = Configuration["Data:DefaultConnection:ConnectionString"];
+            var connection = Configuration["DefaultConnection"];
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlite(connection);
+                options.UseOpenIddict();
+            });
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            var connection = Configuration["Data:DefaultConnection:ConnectionString"];
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connection));
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.ClaimsIdentity.UserNameClaimType = OpenIdConnectConstants.Claims.Name;
+                options.ClaimsIdentity.UserIdClaimType = OpenIdConnectConstants.Claims.Subject;
+                options.ClaimsIdentity.RoleClaimType = OpenIdConnectConstants.Claims.Role;
+            });
+
+            services.AddOpenIddict(options =>
+            {
+                //register the entity framework 
+                options.AddEntityFrameworkCoreStores<ApplicationDbContext>();
+                //register the asp.net core mvc biner 
+                options.AddMvcBinders();
+                //enable the token endpoint (to use password flow)
+                options.EnableTokenEndpoint("/connect/token");
+                //Allow client applications to use the grant_type=password flow.
+                options.AllowPasswordFlow();
+                // During development, you can disable the HTTPS requirement. 
+                options.DisableHttpsRequirement();
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                     .AllowAnyMethod()
+                     .AllowAnyHeader()
+                     .AllowCredentials());
+            });
 
             services.AddMvc();
 
@@ -81,20 +123,28 @@ namespace ZenithWebSite
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseCors("CorsPolicy");
+
             app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStaticFiles();
-
             app.UseIdentity();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
+            //app.UseMvcWithDefaultRoute();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseOAuthValidation();
+            //register the OpenIddict middleware. 
+            app.UseOpenIddict();
+
+            app.UseMvcWithDefaultRoute();
+
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(
+            //        name: "default",
+            //        template: "{controller=Home}/{action=Index}/{id?}");
+            //});
             DummyData.DeleteAll(db);
             DummyData.Initialize(db);
 

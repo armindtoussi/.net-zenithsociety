@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using ZenithWebSite.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ZenithWebSite.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class RoleController : Controller
     {
 

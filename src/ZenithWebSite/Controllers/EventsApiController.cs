@@ -7,10 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ZenithWebSite.Data;
 using ZenithWebSite.Models;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ZenithWebSite.Controllers
 {
     [Produces("application/json")]
+    [EnableCors("CorsPolicy")]
     [Route("api/EventsApi")]
     public class EventsApiController : Controller
     {
@@ -23,6 +26,7 @@ namespace ZenithWebSite.Controllers
 
         // GET: api/EventsApi
         [HttpGet]
+        [Authorize(Roles = "Member")]
         public IEnumerable<Event> GetEvent()
         {
             var applicationDbContext = _context.Event.Include(a => a.Activity);
@@ -31,6 +35,7 @@ namespace ZenithWebSite.Controllers
 
         // GET: api/EventsApi/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Member")]
         public async Task<IActionResult> GetEvent([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -50,6 +55,7 @@ namespace ZenithWebSite.Controllers
 
         // PUT: api/EventsApi/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "Member")]
         public async Task<IActionResult> PutEvent([FromRoute] int id, [FromBody] Event @event)
         {
             if (!ModelState.IsValid)
@@ -83,8 +89,32 @@ namespace ZenithWebSite.Controllers
             return NoContent();
         }
 
+        [HttpGet("{anon}")]
+        public IEnumerable<Event> GetAnonEvents()
+        {
+            DateTime date = DateTime.Today;
+            DateTime start = date.Date.AddDays(-(int)date.DayOfWeek + 1);
+            DateTime end = start.AddDays(7);
+
+            var events = _context.Event.Where(e => e.EventFromDateTime >= start
+                & e.EventFromDateTime < end
+                & e.IsActive == true).ToList();
+            return getActivities(events).OrderBy(e => e.EventFromDateTime);
+        }
+
+        private IEnumerable<Event> getActivities(List<Event> list)
+        {
+            foreach (var e in list)
+            {
+                e.Activity = _context.Activity.FirstOrDefault(async => async.ActivityId == e.ActivityId);
+            }
+            return list;
+        }
+
+
         // POST: api/EventsApi
         [HttpPost]
+        [Authorize(Roles = "Member")]
         public async Task<IActionResult> PostEvent([FromBody] Event @event)
         {
             if (!ModelState.IsValid)
@@ -114,6 +144,7 @@ namespace ZenithWebSite.Controllers
 
         // DELETE: api/EventsApi/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteEvent([FromRoute] int id)
         {
             if (!ModelState.IsValid)

@@ -14,10 +14,12 @@ using ZenithWebSite.Services;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using ZenithWebSite.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 
 namespace ZenithWebSite.Controllers
 {
     [Authorize]
+    [EnableCors("CorsPolicy")]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -53,7 +55,7 @@ namespace ZenithWebSite.Controllers
             return View();
         }
 
-        //
+
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
@@ -91,7 +93,7 @@ namespace ZenithWebSite.Controllers
             return View(model);
         }
 
-        //
+
         // GET: /Account/Register
         [HttpGet]
         [AllowAnonymous]
@@ -101,7 +103,7 @@ namespace ZenithWebSite.Controllers
             return View();
         }
 
-        //
+
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -136,7 +138,7 @@ namespace ZenithWebSite.Controllers
             return View(model);
         }
 
-        //
+
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -147,7 +149,7 @@ namespace ZenithWebSite.Controllers
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
-        //
+
         // POST: /Account/ExternalLogin
         [HttpPost]
         [AllowAnonymous]
@@ -160,7 +162,7 @@ namespace ZenithWebSite.Controllers
             return Challenge(properties, provider);
         }
 
-        //
+
         // GET: /Account/ExternalLoginCallback
         [HttpGet]
         [AllowAnonymous]
@@ -202,7 +204,7 @@ namespace ZenithWebSite.Controllers
             }
         }
 
-        //
+
         // POST: /Account/ExternalLoginConfirmation
         [HttpPost]
         [AllowAnonymous]

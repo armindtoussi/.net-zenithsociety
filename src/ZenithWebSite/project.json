@@ -2,10 +2,15 @@
   "userSecretsId": "aspnet-ZenithWebSite-c73f95c7-1da3-4097-912b-625517d4180b",
 
   "dependencies": {
+    "AspNet.Security.OAuth.Validation": "1.0.0-*",
+    "OpenIddict": "1.0.0-*",
+    "OpenIddict.EntityFrameworkCore": "1.0.0-*",
+    "OpenIddict.Mvc": "1.0.0-*",
     "Microsoft.NETCore.App": {
       "version": "1.0.1",
       "type": "platform"
     },
+
     "Microsoft.ApplicationInsights.AspNetCore": "1.0.0",
     "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
@@ -45,7 +50,8 @@
       "version": "1.0.0-preview2-final",
       "type": "build"
     },
-    "Microsoft.EntityFrameworkCore.Sqlite": "1.0.1"
+    "Microsoft.EntityFrameworkCore.Sqlite": "1.0.1",
+    "Microsoft.AspNetCore.Identity": "1.0.0"
   },
 
   "tools": {
@@ -87,7 +93,9 @@
       "wwwroot",
       "**/*.cshtml",
       "appsettings.json",
-      "web.config"
+      "web.config",
+      "project.json",
+      "project.*.json"
     ]
   },
 

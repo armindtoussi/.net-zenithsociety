@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ZenithSociety.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class EventsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -37,19 +37,19 @@ namespace ZenithSociety.Controllers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Event.Include(a => a.Activity);
-            List<Event> allEvents = await applicationDbContext.ToListAsync();
+            List<ZenithWebSite.Models.Event> allEvents = await applicationDbContext.ToListAsync();
 
-            var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            //var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            //var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            //var currentUser = _context.Users.FirstOrDefault(user => user.Id == userId);
+            // var memberRole = await roleManager.FindByNameAsync("Member");
+            //if (await userManager.IsInRoleAsync(currentUser, memberRole.Name))
+            //{
+            //}
 
-            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var currentUser = _context.Users.FirstOrDefault(user => user.Id == userId);
-
-            var memberRole = await roleManager.FindByNameAsync("Member");
-
-            if (await userManager.IsInRoleAsync(currentUser, memberRole.Name))
+            if (allEvents != null)
             {
                 return View("Index", await applicationDbContext.ToListAsync());
-
             }
 
             return RedirectToAction("Index", "Home");
