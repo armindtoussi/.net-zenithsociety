@@ -59,7 +59,7 @@ namespace ZenithWebSite
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlite(Configuration.GetConnectionString("aspnet-ZenithWebSite-c73f95c7-1da3-4097-912b-625517d4180b"));
+                options.UseSqlite(Configuration.GetConnectionString("zenith-db.sqlite"));
             });
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
