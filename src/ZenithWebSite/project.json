@@ -93,6 +93,7 @@
       "wwwroot",
       "**/*.cshtml",
       "appsettings.json",
+      "appsettings.*.json",
       "web.config",
       "project.json",
       "project.*.json"
