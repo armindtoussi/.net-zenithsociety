@@ -56,6 +56,7 @@ namespace ZenithWebSite
 
             //var connection = Configuration["Data:DefaultConnection:ConnectionString"];
             var connection = Configuration["DefaultConnection"];
+
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlite(connection);
