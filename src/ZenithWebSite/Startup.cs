@@ -54,12 +54,14 @@ namespace ZenithWebSite
 
             //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            var connection = Configuration["Data:DefaultConnection:ConnectionString"];
-            //var connection = Configuration["DefaultConnection"];
+            //var connection = Configuration["Data:DefaultConnection:ConnectionString"];
+
+            var connection = Configuration["DefaultConnection"];
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlite(Configuration.GetConnectionString("zenith-db.sqlite"));
+                options.UseSqlite(connection);
+                options.UseOpenIddict();
             });
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
