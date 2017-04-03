@@ -60,7 +60,6 @@ namespace ZenithWebSite
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlite(connection);
-                options.UseOpenIddict();
             });
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
