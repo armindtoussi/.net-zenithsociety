@@ -101,7 +101,7 @@
   },
 
   "scripts": {
-    "prepublish": [ "bower install", "dotnet bundle" ],
+    "prepublish": [ "nuget sources add -name aspnet-contrib -source https://www.myget.org/F/aspnet-contrib/api/v3/index.json", "bower install", "dotnet bundle" ],
     "postpublish": [ "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%" ]
   }
 }
